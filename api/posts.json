@@ -9,7 +9,8 @@ layout: null
     "author": {{ post.author | jsonify }},
     "date": {{ post.date | date_to_xmlschema | jsonify }},
     "excerpt": {{ post.excerpt | strip_html | jsonify }},
-    "featured_image": {{ post.featured_image | jsonify }}
+    "featured_image": {{ post.featured_image | jsonify }},
+    "content_url": {{ "/api/posts/" | append: post.slug | append: ".json" | relative_url | jsonify }}
   }{% unless forloop.last %},{% endunless %}
 {% endfor %}
 ]

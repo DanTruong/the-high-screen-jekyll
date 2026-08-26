@@ -1,0 +1,13 @@
+---
+layout: null
+---
+{
+  "title": {{ page.post.title | jsonify }},
+  "slug": {{ page.post.slug | jsonify }},
+  "author": {{ page.post.author | jsonify }},
+  "date": {{ page.post.date | date_to_xmlschema | jsonify }},
+  "category": {{ page.post.category | jsonify }},
+  "excerpt": {{ page.post.excerpt | strip_html | jsonify }},
+  "featured_image": {{ page.post.featured_image | jsonify }},
+  "body": {{ page.post.content | markdownify | jsonify }}
+}
