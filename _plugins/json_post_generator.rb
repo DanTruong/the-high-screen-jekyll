@@ -3,15 +3,21 @@ module Jekyll
     def initialize(site, post)
       @site = site
       @base = site.source
+      @dir  = "api/posts"
 
-      @dir = "api/posts"
-      @name = "#{post.data['slug'] || post.basename_without_ext}.json"
+      original_filename = File.basename(post.path)
+      json_filename = original_filename.sub(/\.(md|markdown)$/i, ".json")
+
+      @name = json_filename
+
+      # Make the generated JSON URL available to other templates.
+      post.data["json_url"] = "/api/posts/#{json_filename}"
 
       self.process(@name)
 
       self.data = {
         "layout" => "post_json",
-        "post" => post
+        "post"   => post
       }
     end
   end
