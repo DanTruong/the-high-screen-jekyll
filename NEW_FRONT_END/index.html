@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>The High Screen</title>
+
+    <!-- Bootstrap 5.3.8 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --ths-charcoal: #181A1B;
+            --ths-charcoal-soft: #232629;
+            --ths-red: #E15B4B;
+            --ths-red-deep: #A53A2D;
+            --ths-ivory: #F7F3EC;
+            --ths-card: #FFFFFF;
+            --ths-ink: #2B2D2F;
+            --ths-muted: #5A6065;
+            --ths-teal: #356C68;
+            --ths-gold: #CDA349;
+            --ths-border: #D8D2C8;
+        }
+
+        body {
+            background-color: var(--ths-ivory);
+            color: var(--ths-ink);
+        }
+
+        .site-header {
+            min-height: 260px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--ths-charcoal);
+            text-align: center;
+            padding: 2rem 1rem;
+            border-bottom: 4px solid var(--ths-red-deep);
+        }
+
+        .site-title {
+            position: relative;
+            z-index: 0;
+            display: inline-block;
+            margin: 0;
+            padding: 0.12em 0.42em 0.16em;
+            font-family: "Roboto Slab", Rockwell, "Courier New", serif;
+            font-size: clamp(3rem, 7vw, 6.5rem);
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            line-height: 1;
+            text-transform: uppercase;
+            color: var(--ths-red);
+            white-space: nowrap;
+            text-shadow: 0 2px 0 rgba(255, 255, 255, 0.12);
+        }
+
+        /* Dark newspaper-style banner behind the red masthead lettering. */
+        .site-title::before {
+            content: "";
+            position: absolute;
+            z-index: -1;
+            inset: 0;
+            background: var(--ths-charcoal-soft);
+            transform: skewX(8deg);
+            box-shadow: 12px 0 0 #101112;
+        }
+
+        .site-title::after {
+            content: "";
+            position: absolute;
+            z-index: -2;
+            top: 0;
+            bottom: 0;
+            left: -0.42em;
+            width: 0.7em;
+            background: #303438;
+            clip-path: polygon(0 0, 100% 0, 78% 100%, 35% 100%);
+        }
+
+        .site-navbar {
+            border-radius: 0;
+            background-color: var(--ths-charcoal-soft) !important;
+            border-bottom: 3px solid var(--ths-gold);
+        }
+
+        .site-navbar .nav-link {
+            color: #F1E9DC;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        .site-navbar .nav-link:hover,
+        .site-navbar .nav-link:focus {
+            color: var(--ths-gold);
+            text-decoration: underline;
+            text-underline-offset: 0.25em;
+        }
+
+        .site-navbar .nav-link:focus-visible,
+        a:focus-visible,
+        button:focus-visible {
+            outline: 3px solid var(--ths-gold);
+            outline-offset: 3px;
+        }
+
+        main.container {
+            max-width: 1180px;
+        }
+
+        .card {
+            background-color: var(--ths-card);
+            color: var(--ths-ink);
+            border: 1px solid var(--ths-border);
+            border-radius: 0.35rem;
+            box-shadow: 0 0.2rem 0.7rem rgba(24, 26, 27, 0.08);
+        }
+
+        .card-title {
+            color: var(--ths-red-deep);
+            font-family: "Roboto Slab", Rockwell, serif;
+            font-weight: 800;
+        }
+
+        .card-text,
+        .blockquote {
+            color: var(--ths-ink);
+        }
+
+        .text-body-secondary,
+        .blockquote-footer {
+            color: var(--ths-muted) !important;
+        }
+
+        /* Replaces Bootstrap's default blue featured card with a brand color. */
+        .featured-card {
+            background-color: var(--ths-teal);
+            color: #FFFFFF;
+            border-color: var(--ths-teal);
+        }
+
+        .featured-card .blockquote,
+        .featured-card .blockquote-footer,
+        .featured-card cite {
+            color: #FFFFFF !important;
+        }
+
+        .featured-card .blockquote-footer::before {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .terminal-container {
+            width: 70%;
+            margin: 3rem auto;
+        }
+
+        #terminal-output {
+            height: 350px;
+            overflow-y: auto;
+            background-color: var(--ths-charcoal);
+            color: #F1E9DC;
+            padding: 1rem;
+            border-radius: 0.375rem;
+            white-space: pre-wrap;
+        }
+
+        @media (max-width: 768px) {
+            .site-title {
+                white-space: normal;
+                font-size: clamp(2.5rem, 11vw, 4.5rem);
+            }
+
+            .terminal-container {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="site-header">
+        <h1 class="site-title">The High Screen</h1>
+    </header>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark site-navbar">
+        <div class="container">
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarNav"
+                aria-controls="navbarNav"
+                aria-expanded="false"
+                aria-label="Toggle navigation"
+            >
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">The Buckets Blog</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Show Don't Tell</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">About</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container py-5">
+         <div class="row" data-masonry='{"percentPosition": true }'>
+            <!-- UNCOMMENT THIS BLOCK TO HAVE CARDS WITH IMAGES IN THEM
+            <div class="col-sm-6 col-lg-4 mb-4">
+               <div class="card">
+                  <svg
+                     aria-label="Placeholder: Image cap"
+                     class="bd-placeholder-img card-img-top"
+                     height="200"
+                     preserveAspectRatio="xMidYMid slice"
+                     role="img"
+                     width="100%"
+                     xmlns="http://www.w3.org/2000/svg"
+                  >
+                     <title>Placeholder</title>
+                     <rect width="100%" height="100%" fill="#868e96"></rect>
+                     <text x="50%" y="50%" fill="#dee2e6" dy=".3em">
+                        Image cap
+                     </text>
+                  </svg>
+                  <div class="card-body">
+                     <h5 class="card-title">
+                        Card Example with Image
+                     </h5>
+                     <p class="card-text">
+                        This is a longer card with supporting text below as a
+                        natural lead-in to additional content. This content is a
+                        little bit longer.
+                     </p>
+                  </div>
+               </div>
+            </div>
+            -->
+            <div class="col-sm-6 col-lg-4 mb-4">
+               <div class="card">
+                  <div class="card-body">
+                     <h5 class="card-title">Card title #1</h5>
+                     <p class="card-text">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent dignissim a nunc nec congue. Morbi erat nunc, lacinia at ex eget, malesuada vestibulum dui. Sed imperdiet suscipit tellus, at consequat lacus elementum ut. Suspendisse dapibus at nibh non tempor. Quisque pretium urna blandit, rutrum nunc ac, dignissim ipsum. Proin cursus ut lectus sed tempor. Nam sit amet condimentum purus. 
+                     </p>
+                     <p class="card-text">
+                        <small class="text-body-secondary"
+                           >INSERT AUTHOR HERE</small
+                        >
+                     </p>
+                  </div>
+               </div>
+            </div>
+            <div class="col-sm-6 col-lg-4 mb-4">
+               <div class="card">
+                  <div class="card-body">
+                     <h5 class="card-title">Card title #2</h5>
+                     <p class="card-text">
+                         Morbi lacinia nulla ut augue feugiat rutrum. Curabitur varius diam id risus ornare, quis condimentum dolor fringilla. Nam vitae turpis cursus mauris tincidunt fringilla. Mauris tincidunt quis augue ut laoreet. Phasellus porttitor sem at dui pellentesque iaculis. Pellentesque a erat sit amet dolor pellentesque tincidunt. Aliquam eu ipsum massa. Praesent ac ultricies enim, ac auctor eros. Cras porta volutpat congue. Duis scelerisque efficitur ipsum eget rhoncus. Suspendisse eu augue nisl. Sed vulputate suscipit libero. Sed nunc tortor, suscipit eget risus non, tristique tincidunt eros. In commodo, risus sed dapibus venenatis, purus massa molestie lorem, sit amet varius dui tellus et orci. Ut lobortis laoreet nisl non sodales. 
+                     </p>
+                     <p class="card-text">
+                        <small class="text-body-secondary"
+                           >INSERT AUTHOR HERE</small
+                        >
+                     </p>
+                  </div>
+               </div>
+            </div>
+            <div class="col-sm-6 col-lg-4 mb-4">
+               <div class="card">
+                  <div class="card-body">
+                     <h5 class="card-title">Card title #3</h5>
+                     <p class="card-text">
+                         Sed et diam nulla. Quisque molestie justo vitae malesuada accumsan. Praesent eleifend tempus dolor non vehicula. Mauris nec felis sed sem ultrices tincidunt. Nulla et placerat orci. Nulla tincidunt sed purus at rhoncus. Ut nisi nisi, tincidunt vel vulputate vel, viverra at erat. Suspendisse potenti. Aenean laoreet rhoncus mi vel elementum. Mauris suscipit, leo at mattis consectetur, libero mi varius nulla, quis elementum dui magna at ipsum. Praesent non mauris non dui efficitur suscipit in ut nunc. 
+                     </p>
+                     <p class="card-text">
+                        <small class="text-body-secondary"
+                           >INSERT AUTHOR HERE</small
+                        >
+                     </p>
+                  </div>
+               </div>
+            </div>
+            <div class="col-sm-6 col-lg-4 mb-4">
+               <div class="card">
+                  <div class="card-body">
+                     <h5 class="card-title">Card title #4</h5>
+                     <p class="card-text">
+                         Pellentesque at molestie nisi. Donec nunc tellus, ultrices id quam id, varius rutrum massa. Phasellus nisl lectus, congue nec euismod et, hendrerit eu nibh. Proin sed feugiat diam. Aenean et efficitur eros. Mauris ac consectetur tortor, eu placerat nibh. Quisque commodo sit amet velit ac fermentum. 
+                     </p>
+                     <p class="card-text">
+                        <small class="text-body-secondary"
+                           >INSERT AUTHOR HERE</small
+                        >
+                     </p>
+                  </div>
+               </div>
+            </div>
+            <div class="col-sm-6 col-lg-4 mb-4">
+               <div class="card">
+                  <div class="card-body">
+                     <h5 class="card-title">Card title #5</h5>
+                     <p class="card-text">
+                         Nulla eleifend dui non eros cursus, id condimentum massa venenatis. Curabitur velit nisl, rhoncus id maximus eget, rutrum vel enim. In consequat euismod sem. Quisque ac fermentum sem, lobortis tempus leo. Integer id arcu eget elit pretium aliquam eu et nibh. Fusce risus ligula, tincidunt quis dignissim non, ultrices tincidunt enim. Duis nunc enim, varius non aliquam ac, varius quis justo. Integer varius placerat purus, id lacinia nibh. Proin mollis nisl a lectus sodales elementum. Duis bibendum pellentesque ante. 
+                     </p>
+                     <p class="card-text">
+                        <small class="text-body-secondary"
+                           >INSERT AUTHOR HERE</small
+                        >
+                     </p>
+                  </div>
+               </div>
+            </div>
+            <div class="col-sm-6 col-lg-4 mb-4">
+               <div class="card">
+                  <div class="card-body">
+                     <h5 class="card-title">Card title #6</h5>
+                     <p class="card-text">
+                         Nam ac euismod nisi. Donec et nunc nec tellus euismod blandit nec in dolor. Curabitur convallis sapien et posuere semper. Suspendisse ac hendrerit dui, id bibendum felis. Nunc dapibus quis mi quis congue. Morbi aliquam imperdiet nibh at porta. Curabitur tempus mollis felis ut congue. Sed non vestibulum ipsum. Cras viverra feugiat fermentum. Nam pharetra ultricies urna, ac condimentum erat blandit id. Aliquam a enim finibus, bibendum nunc nec, congue mauris. Ut convallis sit amet felis sit amet semper. Etiam mollis faucibus massa at consequat. Quisque eget neque quis nisi rhoncus luctus. Sed mollis sodales arcu, a consectetur eros hendrerit non. 
+                     </p>
+                     <p class="card-text">
+                        <small class="text-body-secondary"
+                           >INSERT AUTHOR HERE</small
+                        >
+                     </p>
+                  </div>
+               </div>
+            </div>
+            <div class="col-sm-6 col-lg-4 mb-4">
+               <div class="card">
+                  <div class="card-body">
+                     <h5 class="card-title">Card title #7</h5>
+                     <p class="card-text">
+                         Nunc efficitur non sem vel sagittis. Cras viverra consequat velit sed mollis. Praesent vitae leo bibendum, scelerisque ipsum ac, tristique dui. Vivamus semper lorem eu ex iaculis scelerisque. Mauris aliquam neque ut eros viverra posuere. Praesent porta vitae augue sit amet elementum. Sed libero leo, volutpat a felis nec, congue interdum arcu. Donec gravida ante ut ipsum mattis, vel scelerisque tortor cursus. Praesent efficitur urna massa, at porta nisl dapibus molestie. Duis in odio ac urna mattis blandit a eu enim. Aliquam euismod, ligula vel vulputate molestie, enim massa dignissim diam, et gravida sapien elit faucibus turpis. Etiam interdum purus ac mauris rutrum pharetra. Praesent libero felis, auctor quis rhoncus a, pulvinar ac lectus. Vestibulum congue nibh at consequat convallis. Aliquam eu purus nulla. Donec lobortis in arcu nec cursus. 
+                     </p>
+                     <p class="card-text">
+                        <small class="text-body-secondary"
+                           >INSERT AUTHOR HERE</small
+                        >
+                     </p>
+                  </div>
+               </div>
+            </div>
+            <div class="col-sm-6 col-lg-4 mb-4">
+               <div class="card">
+                  <div class="card-body">
+                     <h5 class="card-title">Card title #8</h5>
+                     <p class="card-text">
+                         Ut sit amet lacinia libero. Phasellus pellentesque ornare diam, in sodales arcu pulvinar vitae. Proin enim ipsum, eleifend id venenatis eu, tincidunt ac arcu. Sed laoreet odio vitae pellentesque volutpat. Donec id condimentum massa, imperdiet volutpat augue. Etiam nec sagittis massa, sed convallis libero. Phasellus sed lobortis neque. Proin sit amet eros in nibh dignissim pulvinar a eu ipsum. Nulla aliquam, eros vel mollis volutpat, tortor dolor iaculis lacus, vel posuere velit ex a dui. Vivamus suscipit mauris vel condimentum blandit. Duis vitae cursus massa. 
+                     </p>
+                     <p class="card-text">
+                        <small class="text-body-secondary"
+                           >INSERT AUTHOR HERE</small
+                        >
+                     </p>
+                  </div>
+               </div>
+            </div>
+            <div class="col-sm-6 col-lg-4 mb-4">
+               <div class="card">
+                  <div class="card-body">
+                     <h5 class="card-title">Card title #9</h5>
+                     <p class="card-text">
+                         Vivamus aliquet orci dolor, et pellentesque libero tempor eget. Donec purus enim, luctus nec lectus nec, dapibus semper tellus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Suspendisse ut vestibulum arcu, vitae venenatis neque. Maecenas eu erat risus. Morbi eu sem ac quam rhoncus dictum. Ut at nibh quis odio sagittis mollis. Donec ac nibh sapien. Aliquam suscipit laoreet tellus elementum lobortis. Praesent convallis posuere neque, quis consequat ex mattis non. Curabitur consequat imperdiet arcu, vitae tincidunt leo finibus vel. Nunc faucibus arcu at sapien consectetur, vulputate viverra purus laoreet. 
+                     </p>
+                     <p class="card-text">
+                        <small class="text-body-secondary"
+                           >INSERT AUTHOR HERE</small
+                        >
+                     </p>
+                  </div>
+               </div>
+            </div>
+            <div class="col-sm-6 col-lg-4 mb-4">
+               <div class="card">
+                  <div class="card-body">
+                     <h5 class="card-title">Card title #10</h5>
+                     <p class="card-text">
+                         Suspendisse ut ligula tincidunt, pulvinar arcu consectetur, placerat mi. Suspendisse nec sapien tincidunt, rutrum arcu ut, interdum tellus. Fusce luctus, lacus eget ornare ornare, purus tellus tincidunt risus, eget maximus dui velit sit amet ligula. Aliquam erat volutpat. Nullam turpis orci, feugiat et libero ut, ullamcorper blandit ante. Maecenas et dui ac purus placerat porttitor. Sed dictum porta libero vitae commodo. Cras iaculis ex eu lorem sagittis placerat. Sed tempor dui id luctus blandit. Fusce malesuada nulla eu nunc finibus molestie. Nunc vitae libero vitae felis rutrum suscipit sit amet eget arcu. Etiam eleifend odio sit amet sagittis ornare. Nunc tempor tincidunt ligula, sed tristique turpis. 
+                     </p>
+                     <p class="card-text">
+                        <small class="text-body-secondary"
+                           >INSERT AUTHOR HERE</small
+                        >
+                     </p>
+                  </div>
+               </div>
+            </div>
+            <div class="col-sm-6 col-lg-4 mb-4">
+               <div class="card">
+                  <div class="card-body">
+                     <h5 class="card-title">Card title #11</h5>
+                     <p class="card-text">
+                         Maecenas at neque libero. Mauris sit amet lorem nec ligula volutpat pharetra ac ut libero. Donec et nisi rhoncus, cursus dui sit amet, iaculis justo. Aenean et neque sapien. Proin elementum lectus id rhoncus viverra. Nullam elementum in mauris id consectetur. Nam id mollis massa. Fusce fermentum, nisi vel ullamcorper accumsan, ipsum risus dignissim ligula, id fringilla orci tortor eget nisi. 
+                     </p>
+                     <p class="card-text">
+                        <small class="text-body-secondary"
+                           >INSERT AUTHOR HERE</small
+                        >
+                     </p>
+                  </div>
+               </div>
+            </div>
+            <div class="col-sm-6 col-lg-4 mb-4">
+               <div class="card">
+                  <div class="card-body">
+                     <h5 class="card-title">Card title #12</h5>
+                     <p class="card-text">
+                         Vestibulum sollicitudin enim vitae risus fringilla molestie. Integer sed malesuada ipsum, ac lacinia mauris. Nam rhoncus rhoncus ante, vel ultricies eros tempor condimentum. Fusce blandit convallis est nec vestibulum. Nam facilisis velit neque. Etiam vel odio lectus. Cras maximus, augue nec laoreet finibus, ex ligula malesuada lacus, at elementum quam turpis eu justo. 
+                     </p>
+                     <p class="card-text">
+                        <small class="text-body-secondary"
+                           >INSERT AUTHOR HERE</small
+                        >
+                     </p>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </main>
+
+    <!-- Bootstrap 5.3.8 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha384-GNFwBvfVxBkLMJpYMOABq3c+d3KnQxudP/mGPkzpZSTYykLBNsZEnG2D9G/X/+7D" crossorigin="anonymous" async></script>
+</body>
+</html>
