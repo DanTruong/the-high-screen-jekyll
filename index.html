@@ -1,0 +1,20 @@
+---
+layout: default
+title: The High Screen
+---
+
+<main class="container py-5">
+    <div class="container px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+
+                <div
+                    id="post-list"
+                    data-posts-url="{{ '/api/posts.json' | relative_url }}">
+                    <p>Loading posts...</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</main>
