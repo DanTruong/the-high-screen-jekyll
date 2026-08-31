@@ -1,16 +1,9 @@
 (function() {
 	"use strict";
-
 	const e = React.createElement;
-
 	const POSTS_TO_SHOW = 12;
 
-	/*
-	 * ------------------------------------------------------------
-	 * Utility functions
-	 * ------------------------------------------------------------
-	 */
-
+	//Utility functions
 	function formatDate(dateValue) {
 		if (!dateValue) {
 			return "";
@@ -29,121 +22,64 @@
 		}).format(date);
 	}
 
-
-
-	/*
-	 * Builds the URL that the homepage uses when someone
-	 * clicks an article.
-	 */
+	// Builds the URL that the homepage uses when someone clicks an article.
 	function getPostPageUrl(post) {
-		//const identifier = getPostIdentifier(post);
-
 		if (!post.content_url) {
 			return "#";
 		}
 
 		return (
-			"post.html?json=" +
-			encodeURIComponent(post.content_url)
+			"post.html?json=" + encodeURIComponent(post.content_url)
 		);
 	}
 
-
-	/*
-	 * ------------------------------------------------------------
-	 * Homepage components
-	 * ------------------------------------------------------------
-	 */
-
+	//Homepage components
 	function PostPreview(props) {
 		const post = props.post;
 		const isLast = props.isLast;
-
 		const title = post.title || "Untitled";
-		const excerpt =
-			post.excerpt ||
-			post.subtitle ||
-			"";
-
-		const author =
-			post.author ||
-			"The High Screen";
-
+		const excerpt = post.excerpt || post.subtitle || "";
+		const author = post.author || "The High Screen";
 		const date = formatDate(post.date);
 
-		return e(
-			React.Fragment,
-			null,
-
-			e(
-				"article", {
-					className: "post-preview"
-				},
-
+		return e(React.Fragment, null, 
+				e("article", {className: "post-preview"},
 				e(
-					"a", {
-						href: getPostPageUrl(post)
-					},
-
-					e(
-						"h2", {
-							className: "post-title"
-						},
-						title
-					),
-
+					"a", {href: getPostPageUrl(post)},
+					e("h2", {className: "post-title"}, title),
 					excerpt ?
-					e(
-						"h3", {
-							className: "post-subtitle"
-						},
-						excerpt
-					) :
-					null
+					e("h3", {className: "post-subtitle"}, excerpt) : null
 				),
-
 				e(
-					"p", {
-						className: "post-meta"
-					},
-
-					"Posted by ",
-
-					e(
-						"span",
-						null,
-						author
-					),
-
-					date ?
-					" on " + date :
-					""
+					"p", {className: "post-meta"},
+					"Posted by ", e("span", null, author), date ? " on " + date : ""
 				)
 			),
-
 			!isLast ?
-			e(
-				"hr", {
-					className: "my-4"
-				}
-			) :
-			null
+			e("hr", {className: "my-4"}) : null
 		);
 	}
 
+	function getPageTitle(category) {
+		switch (category) {
+			case "the-buckets-blog":
+				return "The Buckets Blog";
+			case "show-dont-tell":
+				return "Show Don't Tell";
+			case "all":
+				return "Archive";
+			default:
+				return "";
+		}
+	}
 
 	function PostList(props) {
 		const postsUrl = props.postsUrl;
-
-		const [posts, setPosts] =
-		React.useState([]);
-
-		const [loading, setLoading] =
-		React.useState(true);
-
-		const [error, setError] =
-		React.useState(null);
-
+		const params = new URLSearchParams(window.location.search);
+		const selectedCategory = params.get("category");
+		const [posts, setPosts] = React.useState([]);
+		const [loading, setLoading] = React.useState(true);
+		const [error, setError] = React.useState(null);
 
 		React.useEffect(
 			function() {
@@ -166,52 +102,34 @@
 						if (cancelled) {
 							return;
 						}
-
-						/*
-						 * Supports either:
-						 *
-						 * [
-						 *   {...},
-						 *   {...}
-						 * ]
-						 *
-						 * or:
-						 *
-						 * {
-						 *   "posts": [...]
-						 * }
-						 */
 						const postArray =
 							Array.isArray(data) ?
 							data :
 							Array.isArray(data.posts) ?
 							data.posts : [];
 
+						let filteredPosts = postArray.slice();
 
-						const latestPosts =
-							postArray
-							.slice()
-
-							.sort(
-								function(a, b) {
-									return (
-										new Date(
-											b.date || 0
-										) -
-										new Date(
-											a.date || 0
-										)
-									);
+						if (selectedCategory && selectedCategory !== "all") {
+							filteredPosts = filteredPosts.filter(
+								function(post) {
+									if (Array.isArray(post.categories)) {
+										return post.categories.includes(selectedCategory);
+									}
+									return (post.categories === selectedCategory);
 								}
-							)
-
-							.slice(
-								0,
-								POSTS_TO_SHOW
 							);
+						}
+						filteredPosts.sort(
+							function(a, b) {
+								return (new Date(b.date || 0) - new Date(a.date || 0));
+							}
+						);
 
+						const displayedPosts = selectedCategory ? filteredPosts : filteredPosts.slice(
+							0, POSTS_TO_SHOW);
 
-						setPosts(latestPosts);
+						setPosts(displayedPosts);
 						setLoading(false);
 					})
 
@@ -251,7 +169,6 @@
 			return e(
 				"div", {
 					className: "alert alert-danger",
-
 					role: "alert"
 				},
 
@@ -262,32 +179,23 @@
 
 
 		if (posts.length === 0) {
-			return e(
-				"p",
-				null,
-				"No posts are currently available."
-			);
+			return e("p", null, "No posts are currently available.");
 		}
-
+		const pageTitle = getPageTitle(selectedCategory);
 
 		return e(
 			React.Fragment,
 			null,
-
+			pageTitle ? e("h1",
+              			  {className: "archive-title mb-4"},
+              			  pageTitle): null,
 			posts.map(
 				function(post, index) {
 					return e(
 						PostPreview, {
-							key: post.id ||
-								post.url ||
-								post.slug ||
-								post.title ||
-								index,
-
+							key: post.content_url || post.slug || post.title || index,
 							post: post,
-
-							isLast: index ===
-								posts.length - 1
+							isLast: index === posts.length - 1
 						}
 					);
 				}
@@ -295,41 +203,23 @@
 		);
 	}
 
-
-	/*
-	 * ------------------------------------------------------------
-	 * Individual article component
-	 * ------------------------------------------------------------
-	 */
-
+	//Individual article component
 	function Post(props) {
 		const postUrl = props.postUrl;
-
-		const [post, setPost] =
-		React.useState(null);
-
-		const [loading, setLoading] =
-		React.useState(true);
-
-		const [error, setError] =
-		React.useState(null);
-
+		const [post, setPost] = React.useState(null);
+		const [loading, setLoading] = React.useState(true);
+		const [error, setError] = React.useState(null);
 
 		React.useEffect(
 			function() {
 				let cancelled = false;
-
-
 				fetch(postUrl)
 					.then(function(response) {
 						if (!response.ok) {
 							throw new Error(
-								"Unable to load article (HTTP " +
-								response.status +
-								")."
+								"Unable to load article (HTTP " + response.status + ")."
 							);
 						}
-
 						return response.json();
 					})
 
@@ -343,11 +233,7 @@
 					.catch(function(fetchError) {
 						if (!cancelled) {
 							console.error(fetchError);
-
-							setError(
-								fetchError.message
-							);
-
+							setError(fetchError.message);
 							setLoading(false);
 						}
 					});
@@ -361,107 +247,53 @@
 			[postUrl]
 		);
 
-
 		if (loading) {
 			return e(
-				"p", {
-					className: "text-body-secondary"
-				},
-
+				"p", {className: "text-body-secondary"},
 				"Loading article..."
 			);
 		}
-
 
 		if (error) {
 			return e(
 				"div", {
 					className: "alert alert-danger",
-
 					role: "alert"
 				},
-
-				"The article could not be loaded. " +
-				error
+				"The article could not be loaded. " + error
 			);
 		}
-
 
 		if (!post) {
-			return e(
-				"p",
-				null,
-				"Article not found."
-			);
+			return e("p", null, "Article not found.");
 		}
 
-
-		const title =
-			post.title ||
-			"Untitled";
-
-		const author =
-			post.author ||
-			"The High Screen";
-
-		const date =
-			formatDate(post.date);
-
+		const title = post.title || "Untitled";
+		const author = post.author || "The High Screen";
+		const date = formatDate(post.date);
 
 		return e(
 			"article", {
 				className: "post-preview"
 			},
 
-
 			e(
-				"header",
-				null,
-
+				"header",null,
+				e("h2", {className: "post-title"},title),
 				e(
-					"h2", {
-						className: "post-title"
-					},
-
-					title
-				),
-
-
-				e(
-					"p", {
-						className: "post-meta"
-					},
-
+					"p", {className: "post-meta"},
 					"Posted by ",
-
-					e(
-						"span",
-						null,
-						author
-					),
-
-					date ?
-					" on " + date :
-					""
+					e("span", null, author),
+					date ? " on " + date : ""
 				)
 			),
 
-
-			e(
-				"hr", {
-					className: "my-4"
-				}
-			),
-
-
+			e("hr", {className: "my-4"}),
 			e(
 				"div", {
 					className: "post-content",
-
 					dangerouslySetInnerHTML: {
-						__html: post.content ||
-							post.body ||
-							""
+						__html: post.content || post.body || ""
 					}
 				}
 			)
@@ -469,86 +301,40 @@
 	}
 
 
-	/*
-	 * ------------------------------------------------------------
-	 * React initialization
-	 * ------------------------------------------------------------
-	 */
-
-
+/*
+* ------------------------------------------------------------
+* React initialization
+* ------------------------------------------------------------
+*/
 	/*
 	 * HOMEPAGE
 	 */
-
-	const postListElement =
-		document.getElementById(
-			"post-list"
-		);
-
-
+	const postListElement = document.getElementById("post-list");
 	if (postListElement) {
-
-		const postsUrl =
-			postListElement.dataset.postsUrl;
-
-
-		ReactDOM
-			.createRoot(postListElement)
-			.render(
-				e(
-					PostList, {
-						postsUrl: postsUrl
-					}
-				)
-			);
+		const postsUrl = postListElement.dataset.postsUrl;
+		ReactDOM.createRoot(postListElement).render(
+			e(PostList, {postsUrl: postsUrl})
+		);
 	}
-
 
 	/*
 	 * INDIVIDUAL POST PAGE
 	 */
-    const postElement =
-    document.getElementById("post");
-
+    const postElement = document.getElementById("post");
     if (postElement) {
-
-        const params =
-            new URLSearchParams(window.location.search);
-
-        const postUrl =
-            params.get("json");
-
+        const params = new URLSearchParams(window.location.search);
+        const postUrl = params.get("json");
         if (!postUrl) {
-
-            ReactDOM
-                .createRoot(postElement)
-                .render(
-                    e(
-                        "div",
-                        {
-                            className: "alert alert-danger"
-                        },
-                        "No article was specified."
-                    )
-                );
-
+            ReactDOM.createRoot(postElement).render(
+				e("div",{className: "alert alert-danger"},
+					"No article was specified."
+				)
+        	);
         } else {
-
-            ReactDOM
-                .createRoot(postElement)
-                .render(
-                    e(
-                        Post,
-                        {
-                            postUrl: postUrl
-                        }
-                    )
-                );
+            ReactDOM.createRoot(postElement).render(
+                    e(Post,{postUrl: postUrl})
+            );
         }
     }
-
-
-
-
 
 })();

@@ -10,6 +10,7 @@ layout: null
     "date": {{ post.date | date_to_xmlschema | jsonify }},
     "excerpt": {{ post.excerpt | strip_html | jsonify }},
     "featured_image": {{ post.featured_image | jsonify }},
+    "categories": {{ post.categories | jsonify }},
     "content_url": {{ post.json_url | relative_url | jsonify }}
   }{% unless forloop.last %},{% endunless %}
 {% endfor %}
